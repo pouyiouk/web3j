@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -187,9 +187,9 @@ public final class AbiTypes {
             case "int32":
                 return primitives ? Int.class : Int32.class;
             case "uint40":
-                return primitives ? Long.class : Int40.class;
-            case "int40":
                 return primitives ? Long.class : Uint40.class;
+            case "int40":
+                return primitives ? Long.class : Int40.class;
             case "uint48":
                 return primitives ? Long.class : Uint48.class;
             case "int48":

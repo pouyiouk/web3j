@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -61,6 +62,7 @@ public class WebSocketService implements Web3jService {
 
     // WebSocket client
     private final WebSocketClient webSocketClient;
+    private boolean shouldReConnect;
     // Executor to schedule request timeouts
     private final ScheduledExecutorService executor;
     // Object mapper to map incoming JSON objects
@@ -98,9 +100,14 @@ public class WebSocketService implements Web3jService {
      * @throws ConnectException thrown if failed to connect to the server via WebSocket protocol
      */
     public void connect() throws ConnectException {
+        connect(s -> {}, t -> {}, () -> {});
+    }
+
+    public void connect(Consumer<String> onMessage, Consumer<Throwable> onError, Runnable onClose)
+            throws ConnectException {
         try {
             connectToWebSocket();
-            setWebSocketListener();
+            setWebSocketListener(onMessage, onError, onClose);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.warn("Interrupted while connecting via WebSocket protocol");
@@ -108,28 +115,38 @@ public class WebSocketService implements Web3jService {
     }
 
     private void connectToWebSocket() throws InterruptedException, ConnectException {
-        boolean connected = webSocketClient.connectBlocking();
+        boolean connected =
+                shouldReConnect
+                        ? webSocketClient.reconnectBlocking()
+                        : webSocketClient.connectBlocking();
+
         if (!connected) {
             throw new ConnectException("Failed to connect to WebSocket");
         }
+
+        shouldReConnect = true;
     }
 
-    private void setWebSocketListener() {
+    private void setWebSocketListener(
+            Consumer<String> onMessage, Consumer<Throwable> onError, Runnable onClose) {
         webSocketClient.setListener(
                 new WebSocketListener() {
                     @Override
                     public void onMessage(String message) throws IOException {
                         onWebSocketMessage(message);
+                        onMessage.accept(message);
                     }
 
                     @Override
                     public void onError(Exception e) {
                         log.error("Received error from a WebSocket connection", e);
+                        onError.accept(e);
                     }
 
                     @Override
                     public void onClose() {
                         onWebSocketClose();
+                        onClose.run();
                     }
                 });
     }
@@ -202,6 +219,7 @@ public class WebSocketService implements Web3jService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void processRequestReply(String replyStr, JsonNode replyJson) throws IOException {
         long replyId = getReplyId(replyJson);
         WebSocketRequest request = getAndRemoveRequest(replyId);
@@ -219,6 +237,7 @@ public class WebSocketService implements Web3jService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void processSubscriptionResponse(long replyId, EthSubscribe reply) throws IOException {
         WebSocketSubscription subscription = subscriptionRequestForId.get(replyId);
         processSubscriptionResponse(
@@ -226,8 +245,7 @@ public class WebSocketService implements Web3jService {
     }
 
     private <T extends Notification<?>> void processSubscriptionResponse(
-            EthSubscribe subscriptionReply, BehaviorSubject<T> subject, Class<T> responseType)
-            throws IOException {
+            EthSubscribe subscriptionReply, BehaviorSubject<T> subject, Class<T> responseType) {
         if (!subscriptionReply.hasError()) {
             establishSubscription(subject, responseType, subscriptionReply);
         } else {
@@ -261,6 +279,7 @@ public class WebSocketService implements Web3jService {
                                 "Subscription request failed with error: %s", error.getMessage())));
     }
 
+    @SuppressWarnings("unchecked")
     private void sendReplyToListener(WebSocketRequest request, Object reply) {
         request.getOnReply().complete(reply);
     }
@@ -292,6 +311,7 @@ public class WebSocketService implements Web3jService {
         return replyJson.get("params").get("subscription").asText();
     }
 
+    @SuppressWarnings("unchecked")
     private void sendEventToSubscriber(JsonNode replyJson, WebSocketSubscription subscription) {
         Object event = objectMapper.convertValue(replyJson, subscription.getResponseType());
         subscription.getSubject().onNext(event);
@@ -390,11 +410,10 @@ public class WebSocketService implements Web3jService {
     private void unsubscribeFromEventsStream(String subscriptionId, String unsubscribeMethod) {
         sendAsync(unsubscribeRequest(subscriptionId, unsubscribeMethod), EthUnsubscribe.class)
                 .thenAccept(
-                        ethUnsubscribe -> {
-                            log.debug(
-                                    "Successfully unsubscribed from subscription with id {}",
-                                    subscriptionId);
-                        })
+                        ethUnsubscribe ->
+                                log.debug(
+                                        "Successfully unsubscribed from subscription with id {}",
+                                        subscriptionId))
                 .exceptionally(
                         throwable -> {
                             log.error(
@@ -428,22 +447,20 @@ public class WebSocketService implements Web3jService {
         requestForId
                 .values()
                 .forEach(
-                        request -> {
-                            request.getOnReply()
-                                    .completeExceptionally(
-                                            new IOException("Connection was closed"));
-                        });
+                        request ->
+                                request.getOnReply()
+                                        .completeExceptionally(
+                                                new IOException("Connection was closed")));
     }
 
     private void closeOutstandingSubscriptions() {
         subscriptionForId
                 .values()
                 .forEach(
-                        subscription -> {
-                            subscription
-                                    .getSubject()
-                                    .onError(new IOException("Connection was closed"));
-                        });
+                        subscription ->
+                                subscription
+                                        .getSubject()
+                                        .onError(new IOException("Connection was closed")));
     }
 
     // Method visible for unit-tests

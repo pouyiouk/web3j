@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -12,21 +12,20 @@
  */
 package org.web3j.utils;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.web3j.utils.Bytes.trimLeadingZeroes;
 
 public class BytesTest {
 
     @Test
     public void testTrimLeadingZeroes() {
-        assertThat(trimLeadingZeroes(new byte[] {}), is(new byte[] {}));
-        assertThat(trimLeadingZeroes(new byte[] {0}), is(new byte[] {0}));
-        assertThat(trimLeadingZeroes(new byte[] {1}), is(new byte[] {1}));
-        assertThat(trimLeadingZeroes(new byte[] {0, 1}), is(new byte[] {1}));
-        assertThat(trimLeadingZeroes(new byte[] {0, 0, 1}), is(new byte[] {1}));
-        assertThat(trimLeadingZeroes(new byte[] {0, 0, 1, 0}), is(new byte[] {1, 0}));
+        assertArrayEquals(trimLeadingZeroes(new byte[] {}), (new byte[] {}));
+        assertArrayEquals(trimLeadingZeroes(new byte[] {0}), (new byte[] {0}));
+        assertArrayEquals(trimLeadingZeroes(new byte[] {1}), (new byte[] {1}));
+        assertArrayEquals(trimLeadingZeroes(new byte[] {0, 1}), (new byte[] {1}));
+        assertArrayEquals(trimLeadingZeroes(new byte[] {0, 0, 1}), (new byte[] {1}));
+        assertArrayEquals(trimLeadingZeroes(new byte[] {0, 0, 1, 0}), (new byte[] {1, 0}));
     }
 }

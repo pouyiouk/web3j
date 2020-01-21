@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -154,6 +154,22 @@ public class WalletUtils {
     public static Credentials loadBip39Credentials(String password, String mnemonic) {
         byte[] seed = MnemonicUtils.generateSeed(mnemonic, password);
         return Credentials.create(ECKeyPair.create(sha256(seed)));
+    }
+
+    /**
+     * Load credentials from JSON wallet string.
+     *
+     * @param password - password to decrypt JSON wallet string
+     * @param content - JSON wallet content string
+     * @return Ethereum credentials
+     * @throws CipherException if the underlying cipher is not available
+     * @throws IOException if a low-level I/O problem (unexpected end-of-input, network error)
+     *     occurs
+     */
+    public static Credentials loadJsonCredentials(String password, String content)
+            throws IOException, CipherException {
+        WalletFile walletFile = objectMapper.readValue(content, WalletFile.class);
+        return Credentials.create(Wallet.decrypt(password, walletFile));
     }
 
     private static String getWalletFileName(WalletFile walletFile) {

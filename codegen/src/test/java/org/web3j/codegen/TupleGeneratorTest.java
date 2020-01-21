@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -22,11 +22,11 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.web3j.TempFileProvider;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.web3j.codegen.TupleGenerator.CLASS_NAME;
 import static org.web3j.codegen.TupleGenerator.LIMIT;
 
@@ -59,7 +59,7 @@ public class TupleGeneratorTest extends TempFileProvider {
                     fileManager.getJavaFileObjectsFromStrings(sourceFiles);
             JavaCompiler.CompilationTask task =
                     compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits);
-            assertTrue("Generated code contains compile time error", task.call());
+            assertTrue(task.call(), "Generated code contains compile time error");
         }
     }
 }

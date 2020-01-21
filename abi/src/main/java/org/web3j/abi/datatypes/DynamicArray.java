@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ public class DynamicArray<T extends Type> extends Array<T> {
 
     @Deprecated
     @SafeVarargs
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked"})
     public DynamicArray(T... values) {
         super((Class<T>) AbiTypes.getType(values[0].getTypeAsString()), values);
     }

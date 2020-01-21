@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -23,8 +23,10 @@ public abstract class IntType extends NumericType {
         super(typePrefix + bitSize, value);
         this.bitSize = bitSize;
         if (!valid()) {
-            throw new UnsupportedOperationException("Bit size must be 8 bit aligned, " +
-                    "and in range 0 < bitSize <= " + MAX_BIT_LENGTH);
+            throw new UnsupportedOperationException(
+                    "Bit size must be 8 bit aligned, "
+                            + "and in range 0 < bitSize <= "
+                            + MAX_BIT_LENGTH);
         }
     }
 

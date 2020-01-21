@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -12,13 +12,12 @@
  */
 package org.web3j.ens;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EnsIT {
 
@@ -28,8 +27,7 @@ public class EnsIT {
         Web3j web3j = Web3j.build(new HttpService());
         EnsResolver ensResolver = new EnsResolver(web3j);
 
-        assertThat(
-                ensResolver.resolve("web3j.test"),
-                is("0x19e03255f667bdfd50a32722df860b1eeaf4d635"));
+        assertEquals(
+                ensResolver.resolve("web3j.test"), ("0x19e03255f667bdfd50a32722df860b1eeaf4d635"));
     }
 }

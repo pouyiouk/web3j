@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -18,6 +18,8 @@ import java.math.BigInteger;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.methods.request.Transaction;
+import org.web3j.protocol.core.methods.response.EthCall;
+import org.web3j.protocol.core.methods.response.EthGetCode;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 
 /** Transaction manager implementation for read-only operations on smart contracts. */
@@ -47,10 +49,20 @@ public class ReadonlyTransactionManager extends TransactionManager {
     @Override
     public String sendCall(String to, String data, DefaultBlockParameter defaultBlockParameter)
             throws IOException {
-        return web3j.ethCall(
-                        Transaction.createEthCallTransaction(fromAddress, to, data),
-                        defaultBlockParameter)
-                .send()
-                .getValue();
+        EthCall ethCall =
+                web3j.ethCall(
+                                Transaction.createEthCallTransaction(fromAddress, to, data),
+                                defaultBlockParameter)
+                        .send();
+
+        assertCallNotReverted(ethCall);
+        return ethCall.getValue();
+    }
+
+    @Override
+    public EthGetCode getCode(
+            final String contractAddress, final DefaultBlockParameter defaultBlockParameter)
+            throws IOException {
+        return web3j.ethGetCode(contractAddress, defaultBlockParameter).send();
     }
 }

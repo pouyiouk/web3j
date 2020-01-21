@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -35,6 +35,7 @@ import org.web3j.protocol.core.methods.response.DbPutString;
 import org.web3j.protocol.core.methods.response.EthAccounts;
 import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
+import org.web3j.protocol.core.methods.response.EthChainId;
 import org.web3j.protocol.core.methods.response.EthCoinbase;
 import org.web3j.protocol.core.methods.response.EthCompileLLL;
 import org.web3j.protocol.core.methods.response.EthCompileSerpent;
@@ -78,6 +79,8 @@ import org.web3j.protocol.core.methods.response.ShhUninstallFilter;
 import org.web3j.protocol.core.methods.response.ShhVersion;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.core.methods.response.Web3Sha3;
+import org.web3j.protocol.core.methods.response.admin.AdminNodeInfo;
+import org.web3j.protocol.core.methods.response.admin.AdminPeers;
 import org.web3j.protocol.rx.JsonRpc2_0Rx;
 import org.web3j.protocol.websocket.events.LogNotification;
 import org.web3j.protocol.websocket.events.NewHeadsNotification;
@@ -141,12 +144,30 @@ public class JsonRpc2_0Web3j implements Web3j {
     }
 
     @Override
+    public Request<?, AdminNodeInfo> adminNodeInfo() {
+        return new Request<>(
+                "admin_nodeInfo", Collections.emptyList(), web3jService, AdminNodeInfo.class);
+    }
+
+    @Override
+    public Request<?, AdminPeers> adminPeers() {
+        return new Request<>(
+                "admin_peers", Collections.emptyList(), web3jService, AdminPeers.class);
+    }
+
+    @Override
     public Request<?, EthProtocolVersion> ethProtocolVersion() {
         return new Request<>(
                 "eth_protocolVersion",
                 Collections.<String>emptyList(),
                 web3jService,
                 EthProtocolVersion.class);
+    }
+
+    @Override
+    public Request<?, EthChainId> ethChainId() {
+        return new Request<>(
+                "eth_chainId", Collections.<String>emptyList(), web3jService, EthChainId.class);
     }
 
     @Override

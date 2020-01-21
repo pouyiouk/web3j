@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -23,7 +23,8 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.web3j.TempFileProvider;
 import org.web3j.abi.datatypes.Address;
@@ -41,10 +42,9 @@ import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.abi.datatypes.generated.Uint64;
 import org.web3j.protocol.core.methods.response.AbiDefinition;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.web3j.codegen.SolidityFunctionWrapper.buildTypeName;
@@ -59,6 +59,7 @@ public class SolidityFunctionWrapperTest extends TempFileProvider {
     private GenerationReporter generationReporter;
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         generationReporter = mock(GenerationReporter.class);
@@ -69,112 +70,101 @@ public class SolidityFunctionWrapperTest extends TempFileProvider {
 
     @Test
     public void testCreateValidParamName() {
-        assertThat(createValidParamName("param", 1), is("param"));
-        assertThat(createValidParamName("", 1), is("param1"));
+        assertEquals(createValidParamName("param", 1), ("param"));
+        assertEquals(createValidParamName("", 1), ("param1"));
     }
 
     @Test
     public void testBuildTypeName() throws Exception {
-        assertThat(buildTypeName("uint256"), is(ClassName.get(Uint256.class)));
-        assertThat(buildTypeName("uint64"), is(ClassName.get(Uint64.class)));
-        assertThat(buildTypeName("string"), is(ClassName.get(Utf8String.class)));
+        assertEquals(buildTypeName("uint256"), (ClassName.get(Uint256.class)));
+        assertEquals(buildTypeName("uint64"), (ClassName.get(Uint64.class)));
+        assertEquals(buildTypeName("string"), (ClassName.get(Utf8String.class)));
 
-        assertThat(
+        assertEquals(
                 buildTypeName("uint256[]"),
-                is(ParameterizedTypeName.get(DynamicArray.class, Uint256.class)));
+                (ParameterizedTypeName.get(DynamicArray.class, Uint256.class)));
 
-        assertThat(
+        assertEquals(
                 buildTypeName("uint256[] storage"),
-                is(ParameterizedTypeName.get(DynamicArray.class, Uint256.class)));
+                (ParameterizedTypeName.get(DynamicArray.class, Uint256.class)));
 
-        assertThat(
+        assertEquals(
                 buildTypeName("uint256[] memory"),
-                is(ParameterizedTypeName.get(DynamicArray.class, Uint256.class)));
+                (ParameterizedTypeName.get(DynamicArray.class, Uint256.class)));
 
-        assertThat(
+        assertEquals(
                 buildTypeName("uint256[10]"),
-                is(ParameterizedTypeName.get(StaticArray10.class, Uint256.class)));
+                (ParameterizedTypeName.get(StaticArray10.class, Uint256.class)));
 
-        assertThat(
+        assertEquals(
                 buildTypeName("uint256[33]"),
-                is(ParameterizedTypeName.get(StaticArray.class, Uint256.class)));
+                (ParameterizedTypeName.get(StaticArray.class, Uint256.class)));
 
-        assertThat(
+        assertEquals(
                 buildTypeName("uint256[10][3]"),
-                is(
-                        ParameterizedTypeName.get(
-                                ClassName.get(StaticArray3.class),
-                                ParameterizedTypeName.get(StaticArray10.class, Uint256.class))));
+                (ParameterizedTypeName.get(
+                        ClassName.get(StaticArray3.class),
+                        ParameterizedTypeName.get(StaticArray10.class, Uint256.class))));
 
-        assertThat(
+        assertEquals(
                 buildTypeName("uint256[2][]"),
-                is(
-                        ParameterizedTypeName.get(
-                                ClassName.get(DynamicArray.class),
-                                ParameterizedTypeName.get(StaticArray2.class, Uint256.class))));
+                (ParameterizedTypeName.get(
+                        ClassName.get(DynamicArray.class),
+                        ParameterizedTypeName.get(StaticArray2.class, Uint256.class))));
 
-        assertThat(
+        assertEquals(
                 buildTypeName("uint256[33][]"),
-                is(
-                        ParameterizedTypeName.get(
-                                ClassName.get(DynamicArray.class),
-                                ParameterizedTypeName.get(StaticArray.class, Uint256.class))));
+                (ParameterizedTypeName.get(
+                        ClassName.get(DynamicArray.class),
+                        ParameterizedTypeName.get(StaticArray.class, Uint256.class))));
 
-        assertThat(
+        assertEquals(
                 buildTypeName("uint256[][]"),
-                is(
-                        ParameterizedTypeName.get(
-                                ClassName.get(DynamicArray.class),
-                                ParameterizedTypeName.get(DynamicArray.class, Uint256.class))));
+                (ParameterizedTypeName.get(
+                        ClassName.get(DynamicArray.class),
+                        ParameterizedTypeName.get(DynamicArray.class, Uint256.class))));
     }
 
     @Test
     public void testGetNativeType() {
-        assertThat(getNativeType(TypeName.get(Address.class)), equalTo(TypeName.get(String.class)));
-        assertThat(
-                getNativeType(TypeName.get(Uint256.class)),
-                equalTo(TypeName.get(BigInteger.class)));
-        assertThat(
-                getNativeType(TypeName.get(Int256.class)), equalTo(TypeName.get(BigInteger.class)));
-        assertThat(
-                getNativeType(TypeName.get(Utf8String.class)), equalTo(TypeName.get(String.class)));
-        assertThat(getNativeType(TypeName.get(Bool.class)), equalTo(TypeName.get(Boolean.class)));
-        assertThat(getNativeType(TypeName.get(Bytes32.class)), equalTo(TypeName.get(byte[].class)));
-        assertThat(
-                getNativeType(TypeName.get(DynamicBytes.class)),
-                equalTo(TypeName.get(byte[].class)));
+        assertEquals(getNativeType(TypeName.get(Address.class)), (TypeName.get(String.class)));
+        assertEquals(getNativeType(TypeName.get(Uint256.class)), (TypeName.get(BigInteger.class)));
+        assertEquals(getNativeType(TypeName.get(Int256.class)), (TypeName.get(BigInteger.class)));
+        assertEquals(getNativeType(TypeName.get(Utf8String.class)), (TypeName.get(String.class)));
+        assertEquals(getNativeType(TypeName.get(Bool.class)), (TypeName.get(Boolean.class)));
+        assertEquals(getNativeType(TypeName.get(Bytes32.class)), (TypeName.get(byte[].class)));
+        assertEquals(getNativeType(TypeName.get(DynamicBytes.class)), (TypeName.get(byte[].class)));
     }
 
     @Test
     public void testGetNativeTypeParameterized() {
-        assertThat(
+        assertEquals(
                 getNativeType(
                         ParameterizedTypeName.get(
                                 ClassName.get(DynamicArray.class), TypeName.get(Address.class))),
-                equalTo(
-                        ParameterizedTypeName.get(
-                                ClassName.get(List.class), TypeName.get(String.class))));
+                (ParameterizedTypeName.get(ClassName.get(List.class), TypeName.get(String.class))));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetNativeTypeInvalid() {
-        getNativeType(TypeName.get(BigInteger.class));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> getNativeType(TypeName.get(BigInteger.class)));
     }
 
     @Test
     public void testGetEventNativeType() {
-        assertThat(
-                getEventNativeType(TypeName.get(Utf8String.class)),
-                equalTo(TypeName.get(byte[].class)));
+        assertEquals(
+                getEventNativeType(TypeName.get(Utf8String.class)), (TypeName.get(byte[].class)));
     }
 
     @Test
     public void testGetEventNativeTypeParameterized() {
-        assertThat(
+        assertEquals(
                 getEventNativeType(
                         ParameterizedTypeName.get(
                                 ClassName.get(DynamicArray.class), TypeName.get(Address.class))),
-                equalTo(TypeName.get(byte[].class)));
+                (TypeName.get(byte[].class)));
     }
 
     @Test
@@ -199,7 +189,7 @@ public class SolidityFunctionWrapperTest extends TempFileProvider {
                         + "  return executeRemoteCallTransaction(function);\n"
                         + "}\n";
 
-        assertThat(methodSpec.toString(), is(expected));
+        assertEquals(methodSpec.toString(), (expected));
     }
 
     @Test
@@ -243,7 +233,7 @@ public class SolidityFunctionWrapperTest extends TempFileProvider {
                         + "  return executeRemoteCallTransaction(function, weiValue);\n"
                         + "}\n";
 
-        assertThat(methodSpec.toString(), is(expected));
+        assertEquals(methodSpec.toString(), (expected));
     }
 
     @Test
@@ -267,7 +257,7 @@ public class SolidityFunctionWrapperTest extends TempFileProvider {
                         + "  return executeRemoteCallSingleValueReturn(function, java.math.BigInteger.class);\n"
                         + "}\n";
 
-        assertThat(methodSpec.toString(), is(expected));
+        assertEquals(methodSpec.toString(), (expected));
     }
 
     @Test
@@ -299,7 +289,7 @@ public class SolidityFunctionWrapperTest extends TempFileProvider {
                         + "      });\n"
                         + "}\n";
 
-        assertThat(methodSpec.toString(), is(expected));
+        assertEquals(methodSpec.toString(), (expected));
     }
 
     @Test
@@ -333,7 +323,7 @@ public class SolidityFunctionWrapperTest extends TempFileProvider {
                         + "      });\n"
                         + "}\n";
 
-        assertThat(methodSpec.toString(), is(expected));
+        assertEquals(methodSpec.toString(), (expected));
     }
 
     @Test
@@ -368,7 +358,7 @@ public class SolidityFunctionWrapperTest extends TempFileProvider {
                         + "      });\n"
                         + "}\n";
 
-        assertThat(methodSpec.toString(), is(expected));
+        assertEquals(methodSpec.toString(), (expected));
     }
 
     @Test
@@ -422,7 +412,7 @@ public class SolidityFunctionWrapperTest extends TempFileProvider {
                         + "      });\n"
                         + "}\n";
 
-        assertThat(methodSpec.toString(), is(expected));
+        assertEquals(methodSpec.toString(), (expected));
     }
 
     @Test
@@ -505,7 +495,7 @@ public class SolidityFunctionWrapperTest extends TempFileProvider {
                         + "  }\n"
                         + "}\n";
 
-        assertThat(builder.build().toString(), is(expected));
+        assertEquals(builder.build().toString(), (expected));
     }
 
     @Test
@@ -529,6 +519,6 @@ public class SolidityFunctionWrapperTest extends TempFileProvider {
                         + "  public static final java.lang.String FUNC_FUNCTIONNAME = \"functionName\";\n"
                         + "}\n";
 
-        assertThat(builder.build().toString(), is(expected));
+        assertEquals(builder.build().toString(), (expected));
     }
 }

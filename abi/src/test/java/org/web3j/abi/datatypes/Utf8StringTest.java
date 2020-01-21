@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -12,16 +12,15 @@
  */
 package org.web3j.abi.datatypes;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Utf8StringTest {
 
     @Test
     public void testToString() {
-        assertThat(new Utf8String("").toString(), is(""));
-        assertThat(new Utf8String("string").toString(), is("string"));
+        assertEquals(new Utf8String("").toString(), (""));
+        assertEquals(new Utf8String("string").toString(), ("string"));
     }
 }

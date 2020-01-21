@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -12,10 +12,9 @@
  */
 package org.web3j.crypto;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CredentialsTest {
 
@@ -33,7 +32,7 @@ public class CredentialsTest {
     }
 
     private void verify(Credentials credentials) {
-        assertThat(credentials.getAddress(), is(SampleKeys.ADDRESS));
-        assertThat(credentials.getEcKeyPair(), is(SampleKeys.KEY_PAIR));
+        assertEquals(credentials.getAddress(), (SampleKeys.ADDRESS));
+        assertEquals(credentials.getEcKeyPair(), (SampleKeys.KEY_PAIR));
     }
 }

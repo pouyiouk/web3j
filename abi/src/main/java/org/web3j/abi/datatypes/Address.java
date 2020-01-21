@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,7 +16,9 @@ import java.math.BigInteger;
 
 import org.web3j.utils.Numeric;
 
-/** Address type, which by default is equivalent to uint160 which follows the Ethereum specification. */
+/**
+ * Address type, which by default is equivalent to uint160 which follows the Ethereum specification.
+ */
 public class Address implements Type<String> {
 
     public static final String TYPE_NAME = "address";

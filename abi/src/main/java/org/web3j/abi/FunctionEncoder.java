@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -49,14 +49,14 @@ public abstract class FunctionEncoder {
     public static String encodeConstructor(final List<Type> parameters) {
         return encoder().encodeParameters(parameters);
     }
-    
+
     public static Function makeFunction(
             String fnname,
             List<String> solidityInputTypes,
             List<Object> arguments,
             List<String> solidityOutputTypes)
             throws ClassNotFoundException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException, InvocationTargetException {
+                    IllegalAccessException, InvocationTargetException {
         List<Type> encodedInput = new ArrayList<>();
         Iterator argit = arguments.iterator();
         for (String st : solidityInputTypes) {
@@ -68,7 +68,7 @@ public abstract class FunctionEncoder {
         }
         return new Function(fnname, encodedInput, encodedOutput);
     }
-    
+
     protected abstract String encodeFunction(Function function);
 
     protected abstract String encodeParameters(List<Type> parameters);

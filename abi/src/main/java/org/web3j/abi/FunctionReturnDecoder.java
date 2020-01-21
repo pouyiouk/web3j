@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -20,10 +20,12 @@ import java.util.ServiceLoader;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.spi.FunctionReturnDecoderProvider;
 
-/** Decodes values returned by function or event calls. 
+/**
+ * Decodes values returned by function or event calls.
  *
- * <p>Delegates to {@link DefaultFunctionReturnDecoder} unless a {@link FunctionReturnDecoderProvider} SPI is
- * found, in which case the first implementation found will be used.
+ * <p>Delegates to {@link DefaultFunctionReturnDecoder} unless a {@link
+ * FunctionReturnDecoderProvider} SPI is found, in which case the first implementation found will be
+ * used.
  *
  * @see DefaultFunctionReturnDecoder
  * @see FunctionReturnDecoderProvider

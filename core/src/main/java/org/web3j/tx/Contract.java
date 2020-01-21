@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -48,10 +48,12 @@ import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.StaticGasProvider;
 import org.web3j.utils.Numeric;
 
+import static org.web3j.utils.RevertReasonExtractor.extractRevertReason;
+
 /**
  * Solidity contract type abstraction for interacting with smart contracts via native Java types.
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "deprecation"})
 public abstract class Contract extends ManagedTransaction {
 
     // https://www.reddit.com/r/ethereum/comments/5g8ia6/attention_miners_we_recommend_raising_gas_limit/
@@ -242,7 +244,7 @@ public abstract class Contract extends ManagedTransaction {
         }
 
         EthGetCode ethGetCode =
-                web3j.ethGetCode(contractAddress, DefaultBlockParameterName.LATEST).send();
+                transactionManager.getCode(contractAddress, DefaultBlockParameterName.LATEST);
         if (ethGetCode.hasError()) {
             return false;
         }
@@ -370,11 +372,17 @@ public abstract class Contract extends ManagedTransaction {
         if (!receipt.isStatusOK()) {
             throw new TransactionException(
                     String.format(
-                            "Transaction has failed with status: %s. "
-                                    + "Gas used: %d. (not-enough gas?)",
-                            receipt.getStatus(), receipt.getGasUsed()));
+                            "Transaction %s has failed with status: %s. "
+                                    + "Gas used: %s. "
+                                    + "Revert reason: '%s'.",
+                            receipt.getTransactionHash(),
+                            receipt.getStatus(),
+                            receipt.getGasUsedRaw() != null
+                                    ? receipt.getGasUsed().toString()
+                                    : "unknown",
+                            extractRevertReason(receipt, data, web3j, true)),
+                    receipt);
         }
-
         return receipt;
     }
 

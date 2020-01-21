@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -22,6 +22,7 @@ import org.web3j.protocol.core.methods.response.DbPutString;
 import org.web3j.protocol.core.methods.response.EthAccounts;
 import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
+import org.web3j.protocol.core.methods.response.EthChainId;
 import org.web3j.protocol.core.methods.response.EthCoinbase;
 import org.web3j.protocol.core.methods.response.EthCompileLLL;
 import org.web3j.protocol.core.methods.response.EthCompileSerpent;
@@ -63,6 +64,8 @@ import org.web3j.protocol.core.methods.response.ShhUninstallFilter;
 import org.web3j.protocol.core.methods.response.ShhVersion;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.core.methods.response.Web3Sha3;
+import org.web3j.protocol.core.methods.response.admin.AdminNodeInfo;
+import org.web3j.protocol.core.methods.response.admin.AdminPeers;
 
 /** Core Ethereum JSON-RPC API. */
 public interface Ethereum {
@@ -76,7 +79,13 @@ public interface Ethereum {
 
     Request<?, NetPeerCount> netPeerCount();
 
+    Request<?, AdminNodeInfo> adminNodeInfo();
+
+    Request<?, AdminPeers> adminPeers();
+
     Request<?, EthProtocolVersion> ethProtocolVersion();
+
+    Request<?, EthChainId> ethChainId();
 
     Request<?, EthCoinbase> ethCoinbase();
 

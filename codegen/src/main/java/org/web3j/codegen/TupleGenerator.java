@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -54,7 +54,7 @@ public class TupleGenerator extends Generator {
     }
 
     private TypeSpec createTuple(int size) {
-        String javadoc = "@deprecated use 'component$L' method instead";
+        String javadoc = "@deprecated use 'component$L' method instead \n @return returns a value";
         String className = CLASS_NAME + size;
         TypeSpec.Builder typeSpecBuilder =
                 TypeSpec.classBuilder(className)

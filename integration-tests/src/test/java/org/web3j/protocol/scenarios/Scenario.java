@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -21,7 +21,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Optional;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Function;
@@ -36,7 +36,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.StaticGasProvider;
 
-import static junit.framework.TestCase.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /** Common methods & settings used accross scenarios. */
 public class Scenario {
@@ -75,7 +75,7 @@ public class Scenario {
 
     public Scenario() {}
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.web3j = Admin.build(new HttpService());
     }

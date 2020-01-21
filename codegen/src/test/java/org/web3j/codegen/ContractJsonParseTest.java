@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -15,14 +15,14 @@ package org.web3j.codegen;
 import java.io.File;
 import java.net.URL;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.web3j.protocol.core.methods.response.AbiDefinition;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.web3j.codegen.TruffleJsonFunctionWrapperGenerator.Contract;
 import static org.web3j.codegen.TruffleJsonFunctionWrapperGenerator.loadContractDefinition;
 
@@ -51,9 +51,9 @@ public class ContractJsonParseTest {
         return loadContractDefinition(new File(fileLocation));
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        URL url = SolidityFunctionWrapperGeneratorTest.class.getClass().getResource("/truffle");
+        URL url = SolidityFunctionWrapperGeneratorTest.class.getResource("/truffle");
         contractBaseDir = url.getPath();
     }
 
@@ -61,23 +61,23 @@ public class ContractJsonParseTest {
     public void testParseMetaCoin() throws Exception {
         Contract mc = parseContractJson(contractBaseDir, "MetaCoin", "MetaCoin");
 
-        assertEquals("Unexpected contract name", "MetaCoin", mc.getContractName());
+        assertEquals("MetaCoin", mc.getContractName(), "Unexpected contract name");
     }
 
     @Test
     public void testParseConvertLib() throws Exception {
         Contract mc = parseContractJson(contractBaseDir, "MetaCoin", "ConvertLib");
 
-        assertEquals("Unexpected contract name", "ConvertLib", mc.getContractName());
-        assertEquals("Unexpected number of functions", 1, mc.abi.size());
+        assertEquals("ConvertLib", mc.getContractName(), "Unexpected contract name");
+        assertEquals(1, mc.abi.size());
         AbiDefinition abi = mc.abi.get(0);
-        assertEquals("Unexpected function name", "convert", abi.getName());
-        assertTrue("Expected function to be 'constant'", abi.isConstant());
-        assertFalse("Expected function to not be 'payable'", abi.isPayable());
-        assertEquals("Expected abi to represent a function", "function", abi.getType());
+        assertEquals("convert", abi.getName(), "Unexpected function name");
+        assertTrue(abi.isConstant(), "Expected function to be 'constant");
+        assertFalse(abi.isPayable(), "Expected function to not be 'payable'");
+        assertEquals("function", abi.getType(), "Expected abi to represent a function");
         assertEquals(
-                "Expected the 'pure' for the state mutability setting",
                 "pure",
-                abi.getStateMutability());
+                abi.getStateMutability(),
+                "Expected the 'pure' for the state mutability setting");
     }
 }

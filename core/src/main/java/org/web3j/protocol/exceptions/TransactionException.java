@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,6 +14,8 @@ package org.web3j.protocol.exceptions;
 
 import java.util.Optional;
 
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
+
 /**
  * Transaction timeout exception indicates that we have breached some threshold waiting for a
  * transaction to execute.
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class TransactionException extends Exception {
 
     private Optional<String> transactionHash = Optional.empty();
+    private Optional<TransactionReceipt> transactionReceipt = Optional.empty();
 
     public TransactionException(String message) {
         super(message);
@@ -29,6 +32,11 @@ public class TransactionException extends Exception {
     public TransactionException(String message, String transactionHash) {
         super(message);
         this.transactionHash = Optional.ofNullable(transactionHash);
+    }
+
+    public TransactionException(String message, TransactionReceipt transactionReceipt) {
+        super(message);
+        this.transactionReceipt = Optional.ofNullable(transactionReceipt);
     }
 
     public TransactionException(Throwable cause) {
@@ -42,5 +50,14 @@ public class TransactionException extends Exception {
      */
     public Optional<String> getTransactionHash() {
         return transactionHash;
+    }
+
+    /**
+     * Obtain the transaction receipt.
+     *
+     * @return optional transaction receipt.
+     */
+    public Optional<TransactionReceipt> getTransactionReceipt() {
+        return transactionReceipt;
     }
 }

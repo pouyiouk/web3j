@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -12,8 +12,9 @@
  */
 package org.web3j.utils;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.web3j.utils.Assertions.verifyPrecondition;
 
 public class AssertionsTest {
@@ -23,8 +24,9 @@ public class AssertionsTest {
         verifyPrecondition(true, "");
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testVerifyPreconditionFailure() {
-        verifyPrecondition(false, "");
+
+        assertThrows(RuntimeException.class, () -> verifyPrecondition(false, ""));
     }
 }

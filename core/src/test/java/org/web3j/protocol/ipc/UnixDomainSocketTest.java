@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -18,13 +18,13 @@ import java.io.PrintWriter;
 import java.nio.CharBuffer;
 import java.util.LinkedList;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -40,7 +40,7 @@ public class UnixDomainSocketTest {
 
     private UnixDomainSocket unixDomainSocket;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         writer = mock(PrintWriter.class);
         reader = mock(InputStreamReader.class);

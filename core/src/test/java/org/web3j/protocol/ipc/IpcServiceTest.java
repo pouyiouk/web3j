@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,8 +14,8 @@ package org.web3j.protocol.ipc;
 
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
@@ -29,7 +29,7 @@ public class IpcServiceTest {
     private IpcService ipcService;
     private IOFacade ioFacade;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ioFacade = mock(IOFacade.class);
         ipcService =

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -12,8 +12,10 @@
  */
 package org.web3j.codegen;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,15 +26,15 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.web3j.TempFileProvider;
 import org.web3j.utils.Strings;
 
 import static java.util.Collections.emptyList;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.web3j.codegen.FunctionWrapperGenerator.JAVA_TYPES_ARG;
 import static org.web3j.codegen.FunctionWrapperGenerator.PRIMITIVE_TYPES_ARG;
 import static org.web3j.codegen.FunctionWrapperGenerator.SOLIDITY_TYPES_ARG;
@@ -45,19 +47,20 @@ public class SolidityFunctionWrapperGeneratorTest extends TempFileProvider {
     private String solidityBaseDir;
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
-        URL url = SolidityFunctionWrapperGeneratorTest.class.getClass().getResource("/solidity");
+        URL url = SolidityFunctionWrapperGeneratorTest.class.getResource("/solidity");
         solidityBaseDir = url.getPath();
     }
 
     @Test
     public void testGetFileNoExtension() {
-        assertThat(getFileNameNoExtension(""), is(""));
-        assertThat(getFileNameNoExtension("file"), is("file"));
-        assertThat(getFileNameNoExtension("file."), is("file"));
-        assertThat(getFileNameNoExtension("file.txt"), is("file"));
+        assertEquals("", getFileNameNoExtension(""));
+        assertEquals("file", getFileNameNoExtension("file"));
+        assertEquals("file", getFileNameNoExtension("file."));
+        assertEquals("file", getFileNameNoExtension("file.txt"));
     }
 
     @Test
@@ -106,6 +109,20 @@ public class SolidityFunctionWrapperGeneratorTest extends TempFileProvider {
     public void testContractsNoBin() throws Exception {
         testCodeGeneration("contracts", "HumanStandardToken", JAVA_TYPES_ARG, false);
         testCodeGeneration("contracts", "HumanStandardToken", SOLIDITY_TYPES_ARG, false);
+    }
+
+    @Test
+    public void testDuplicateField() throws Exception {
+        PrintStream console = System.out;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        testCodeGeneration("duplicate", "DuplicateField", JAVA_TYPES_ARG, false);
+        testCodeGeneration("duplicate", "DuplicateField", SOLIDITY_TYPES_ARG, false);
+
+        System.setOut(console);
+        System.out.println(out.toString());
+        assertTrue(out.toString().contains("Duplicate field(s) found"));
     }
 
     @Test
@@ -234,7 +251,7 @@ public class SolidityFunctionWrapperGeneratorTest extends TempFileProvider {
             boolean result = task.call();
 
             System.out.println(diagnostics.getDiagnostics());
-            assertTrue("Generated contract contains compile time error", result);
+            assertTrue(result, "Generated contract contains compile time error");
         }
     }
 }

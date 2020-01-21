@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,9 +17,12 @@ import java.math.BigInteger;
 
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
+import org.web3j.protocol.core.methods.response.EthCall;
+import org.web3j.protocol.core.methods.response.EthGetCode;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.exceptions.TransactionException;
+import org.web3j.tx.exceptions.ContractCallException;
 import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 import org.web3j.tx.response.TransactionReceiptProcessor;
 
@@ -33,6 +36,8 @@ public abstract class TransactionManager {
 
     public static final int DEFAULT_POLLING_ATTEMPTS_PER_TX_HASH = 40;
     public static final long DEFAULT_POLLING_FREQUENCY = DEFAULT_BLOCK_TIME;
+    public static final String REVERT_ERR_STR =
+            "Contract Call has been reverted by the EVM with the reason: '%s'.";
 
     private final TransactionReceiptProcessor transactionReceiptProcessor;
     private final String fromAddress;
@@ -94,6 +99,9 @@ public abstract class TransactionManager {
     public abstract String sendCall(
             String to, String data, DefaultBlockParameter defaultBlockParameter) throws IOException;
 
+    public abstract EthGetCode getCode(
+            String contractAddress, DefaultBlockParameter defaultBlockParameter) throws IOException;
+
     public String getFromAddress() {
         return fromAddress;
     }
@@ -109,5 +117,12 @@ public abstract class TransactionManager {
         String transactionHash = transactionResponse.getTransactionHash();
 
         return transactionReceiptProcessor.waitForTransactionReceipt(transactionHash);
+    }
+
+    static void assertCallNotReverted(EthCall ethCall) {
+        if (ethCall.isReverted()) {
+            throw new ContractCallException(
+                    String.format(REVERT_ERR_STR, ethCall.getRevertReason()));
+        }
     }
 }

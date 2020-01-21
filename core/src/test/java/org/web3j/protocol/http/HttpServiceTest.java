@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Web3 Labs LTD.
+ * Copyright 2019 Web3 Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -22,8 +22,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import org.web3j.protocol.core.Request;
@@ -32,7 +31,10 @@ import org.web3j.protocol.core.methods.response.EthSubscribe;
 import org.web3j.protocol.exceptions.ClientConnectionException;
 import org.web3j.protocol.websocket.events.NewHeadsNotification;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpServiceTest {
 
@@ -71,7 +73,7 @@ public class HttpServiceTest {
                 new Response.Builder()
                         .code(400)
                         .message("")
-                        .body(ResponseBody.create(null, content))
+                        .body(ResponseBody.create(content, null))
                         .request(new okhttp3.Request.Builder().url(HttpService.DEFAULT_URL).build())
                         .protocol(Protocol.HTTP_1_1)
                         .build();
@@ -96,16 +98,16 @@ public class HttpServiceTest {
         try {
             mockedHttpService.send(request, EthBlockNumber.class);
         } catch (ClientConnectionException e) {
-            Assert.assertEquals(
+            assertEquals(
                     e.getMessage(),
                     "Invalid response received: " + response.code() + "; " + content);
             return;
         }
 
-        Assert.fail("No exception");
+        fail("No exception");
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void subscriptionNotSupported() {
         Request<Object, EthSubscribe> subscribeRequest =
                 new Request<>(
@@ -113,7 +115,10 @@ public class HttpServiceTest {
                         Arrays.asList("newHeads", Collections.emptyMap()),
                         httpService,
                         EthSubscribe.class);
-
-        httpService.subscribe(subscribeRequest, "eth_unsubscribe", NewHeadsNotification.class);
+        assertThrows(
+                UnsupportedOperationException.class,
+                () ->
+                        httpService.subscribe(
+                                subscribeRequest, "eth_unsubscribe", NewHeadsNotification.class));
     }
 }
