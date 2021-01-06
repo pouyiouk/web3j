@@ -12,19 +12,15 @@
  */
 package org.web3j.abi;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
 import org.junit.jupiter.api.Test;
 
-import org.web3j.abi.datatypes.Bool;
-import org.web3j.abi.datatypes.DynamicArray;
-import org.web3j.abi.datatypes.DynamicBytes;
-import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.Uint;
-import org.web3j.abi.datatypes.Utf8String;
+import org.web3j.abi.datatypes.*;
 import org.web3j.abi.datatypes.generated.Bytes10;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.abi.datatypes.generated.Uint32;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -145,5 +141,184 @@ public class DefaultFunctionEncoderTest {
                         + "000000000000000000000000000000000000000000000000000000000000000d"
                         + "48656c6c6f2c20776f726c642100000000000000000000000000000000000000",
                 FunctionEncoder.encode(function));
+    }
+
+    @Test
+    public void testStaticStructEncode() {
+        assertEquals(
+                "0x3d761de6"
+                        + "0000000000000000000000000000000000000000000000000000000000000001"
+                        + "000000000000000000000000000000000000000000000000000000000000000a",
+                FunctionEncoder.encode(AbiV2TestFixture.setBarFunction));
+    }
+
+    @Test
+    public void testDynamicStructEncode() {
+        assertEquals(
+                "0x2cf07395"
+                        + "0000000000000000000000000000000000000000000000000000000000000020"
+                        + "0000000000000000000000000000000000000000000000000000000000000040"
+                        + "0000000000000000000000000000000000000000000000000000000000000080"
+                        + "0000000000000000000000000000000000000000000000000000000000000002"
+                        + "6964000000000000000000000000000000000000000000000000000000000000"
+                        + "0000000000000000000000000000000000000000000000000000000000000004"
+                        + "6e616d6500000000000000000000000000000000000000000000000000000000",
+                FunctionEncoder.encode(AbiV2TestFixture.setFooFunction));
+    }
+
+    @Test
+    public void testDynamicStructWithStaticFieldEncode() {
+        assertEquals(
+                "0x9096c213"
+                        + "0000000000000000000000000000000000000000000000000000000000000020"
+                        + "0000000000000000000000000000000000000000000000000000000000000040"
+                        + "0000000000000000000000000000000000000000000000000000000000000001"
+                        + "0000000000000000000000000000000000000000000000000000000000000002"
+                        + "6964000000000000000000000000000000000000000000000000000000000000",
+                FunctionEncoder.encode(AbiV2TestFixture.setBazFunction));
+    }
+
+    @Test
+    public void testDynamicStructWithStaticFieldEncode2() {
+        assertEquals(
+                "0xbe9c5e34"
+                        + "0000000000000000000000000000000000000000000000000000000000000020"
+                        + "0000000000000000000000000000000000000000000000000000000000000001"
+                        + "0000000000000000000000000000000000000000000000000000000000000040"
+                        + "0000000000000000000000000000000000000000000000000000000000000002"
+                        + "6964000000000000000000000000000000000000000000000000000000000000",
+                FunctionEncoder.encode(AbiV2TestFixture.setBozFunction));
+    }
+
+    @Test
+    public void testStaticStructNestedEncode() {
+        assertEquals(
+                "0xad204a12"
+                        + "0000000000000000000000000000000000000000000000000000000000000001"
+                        + "000000000000000000000000000000000000000000000000000000000000000a"
+                        + "0000000000000000000000000000000000000000000000000000000000000001",
+                FunctionEncoder.encode(AbiV2TestFixture.setFuzzFunction));
+    }
+
+    @Test
+    public void testDynamicStructNestedEncode() {
+        assertEquals(
+                "0x8c9fb6f9"
+                        + "0000000000000000000000000000000000000000000000000000000000000020"
+                        + "0000000000000000000000000000000000000000000000000000000000000020"
+                        + "0000000000000000000000000000000000000000000000000000000000000040"
+                        + "0000000000000000000000000000000000000000000000000000000000000080"
+                        + "0000000000000000000000000000000000000000000000000000000000000002"
+                        + "6964000000000000000000000000000000000000000000000000000000000000"
+                        + "0000000000000000000000000000000000000000000000000000000000000004"
+                        + "6e616d6500000000000000000000000000000000000000000000000000000000",
+                FunctionEncoder.encode(AbiV2TestFixture.setNuuFunction));
+    }
+
+    @Test
+    public void testDynamicStructNestedEncode2() {
+        assertEquals(
+                "0x6bb632a9"
+                        + "0000000000000000000000000000000000000000000000000000000000000020"
+                        + "0000000000000000000000000000000000000000000000000000000000000040"
+                        + "0000000000000000000000000000000000000000000000000000000000000001"
+                        + "0000000000000000000000000000000000000000000000000000000000000020"
+                        + "0000000000000000000000000000000000000000000000000000000000000020"
+                        + "0000000000000000000000000000000000000000000000000000000000000040"
+                        + "0000000000000000000000000000000000000000000000000000000000000080"
+                        + "0000000000000000000000000000000000000000000000000000000000000002"
+                        + "6964000000000000000000000000000000000000000000000000000000000000"
+                        + "0000000000000000000000000000000000000000000000000000000000000004"
+                        + "6e616d6500000000000000000000000000000000000000000000000000000000",
+                FunctionEncoder.encode(AbiV2TestFixture.setNazFunction));
+    }
+
+    @Test
+    public void testDynamicStructNestedEncode3() {
+        assertEquals(
+                "0xc036933d"
+                        + "0000000000000000000000000000000000000000000000000000000000000020"
+                        + "0000000000000000000000000000000000000000000000000000000000000040"
+                        + "0000000000000000000000000000000000000000000000000000000000000100"
+                        + "0000000000000000000000000000000000000000000000000000000000000040"
+                        + "0000000000000000000000000000000000000000000000000000000000000080"
+                        + "0000000000000000000000000000000000000000000000000000000000000002"
+                        + "6964000000000000000000000000000000000000000000000000000000000000"
+                        + "0000000000000000000000000000000000000000000000000000000000000004"
+                        + "6e616d6500000000000000000000000000000000000000000000000000000000"
+                        + "0000000000000000000000000000000000000000000000000000000000000004"
+                        + "6461746100000000000000000000000000000000000000000000000000000000",
+                FunctionEncoder.encode(AbiV2TestFixture.setWizFunction));
+    }
+
+    @Test
+    public void testABIv2ConstructorEncode() {
+        class Struct1 extends DynamicStruct {
+            public String id;
+            public String name;
+
+            public Struct1(String id, String name) {
+                super(new Utf8String(id), new Utf8String(name));
+                this.id = id;
+                this.name = name;
+            }
+        }
+        class Struct2 extends StaticStruct {
+            public BigInteger id;
+            public BigInteger name;
+
+            public Struct2(BigInteger id, BigInteger name) {
+                super(new Uint256(id), new Uint256(name));
+                this.id = id;
+                this.name = name;
+            }
+        }
+
+        assertEquals(
+                "0000000000000000000000000000000000000000000000000000000000000060"
+                        + "0000000000000000000000000000000000000000000000000000000000000064"
+                        + "0000000000000000000000000000000000000000000000000000000000000001"
+                        + "0000000000000000000000000000000000000000000000000000000000000040"
+                        + "0000000000000000000000000000000000000000000000000000000000000080"
+                        + "0000000000000000000000000000000000000000000000000000000000000002"
+                        + "6964000000000000000000000000000000000000000000000000000000000000"
+                        + "0000000000000000000000000000000000000000000000000000000000000004"
+                        + "6461746100000000000000000000000000000000000000000000000000000000",
+                FunctionEncoder.encodeConstructor(
+                        Arrays.asList(
+                                new Struct1("id", "data"),
+                                new Struct2(BigInteger.valueOf(100), BigInteger.ONE))));
+    }
+
+    @Test
+    public void testMakeFunction()
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
+                    InstantiationException, IllegalAccessException {
+
+        Function expectedFunction =
+                new Function(
+                        "function",
+                        Arrays.asList(new Bool(true)),
+                        Arrays.asList(new TypeReference<Uint256>() {}));
+
+        Function actualFunction =
+                FunctionEncoder.makeFunction(
+                        "function",
+                        Arrays.asList("bool"),
+                        Arrays.asList(true),
+                        Arrays.asList("uint256"));
+
+        assertEquals(actualFunction.getName(), expectedFunction.getName());
+
+        Iterator<Type> expectedInput = expectedFunction.getInputParameters().iterator();
+        for (Type actualInput : actualFunction.getInputParameters()) {
+            assertEquals(actualInput.getValue(), expectedInput.next().getValue());
+        }
+
+        Iterator<TypeReference<Type>> expectedOutput =
+                expectedFunction.getOutputParameters().iterator();
+        for (TypeReference<Type> actualOutput : actualFunction.getOutputParameters()) {
+            assertEquals(actualOutput.getType(), expectedOutput.next().getType());
+        }
     }
 }

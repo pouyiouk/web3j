@@ -28,6 +28,7 @@ import org.web3j.protocol.Web3jService;
 import org.web3j.protocol.core.methods.request.ShhFilter;
 import org.web3j.protocol.core.methods.request.ShhPost;
 import org.web3j.protocol.core.methods.request.Transaction;
+import org.web3j.protocol.core.methods.response.BooleanResponse;
 import org.web3j.protocol.core.methods.response.DbGetHex;
 import org.web3j.protocol.core.methods.response.DbGetString;
 import org.web3j.protocol.core.methods.response.DbPutHex;
@@ -77,8 +78,10 @@ import org.web3j.protocol.core.methods.response.ShhNewGroup;
 import org.web3j.protocol.core.methods.response.ShhNewIdentity;
 import org.web3j.protocol.core.methods.response.ShhUninstallFilter;
 import org.web3j.protocol.core.methods.response.ShhVersion;
+import org.web3j.protocol.core.methods.response.TxPoolStatus;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.core.methods.response.Web3Sha3;
+import org.web3j.protocol.core.methods.response.admin.AdminDataDir;
 import org.web3j.protocol.core.methods.response.admin.AdminNodeInfo;
 import org.web3j.protocol.core.methods.response.admin.AdminPeers;
 import org.web3j.protocol.rx.JsonRpc2_0Rx;
@@ -153,6 +156,24 @@ public class JsonRpc2_0Web3j implements Web3j {
     public Request<?, AdminPeers> adminPeers() {
         return new Request<>(
                 "admin_peers", Collections.emptyList(), web3jService, AdminPeers.class);
+    }
+
+    @Override
+    public Request<?, BooleanResponse> adminAddPeer(String url) {
+        return new Request<>(
+                "admin_addPeer", Arrays.asList(url), web3jService, BooleanResponse.class);
+    }
+
+    @Override
+    public Request<?, BooleanResponse> adminRemovePeer(String url) {
+        return new Request<>(
+                "admin_removePeer", Arrays.asList(url), web3jService, BooleanResponse.class);
+    }
+
+    @Override
+    public Request<?, AdminDataDir> adminDataDir() {
+        return new Request<>(
+                "admin_datadir", Collections.emptyList(), web3jService, AdminDataDir.class);
     }
 
     @Override
@@ -653,6 +674,12 @@ public class JsonRpc2_0Web3j implements Web3j {
     }
 
     @Override
+    public Request<?, TxPoolStatus> txPoolStatus() {
+        return new Request<>(
+                "txpool_status", Collections.<String>emptyList(), web3jService, TxPoolStatus.class);
+    }
+
+    @Override
     public Flowable<NewHeadsNotification> newHeadsNotifications() {
         return web3jService.subscribe(
                 new Request<>(
@@ -790,5 +817,10 @@ public class JsonRpc2_0Web3j implements Web3j {
         } catch (IOException e) {
             throw new RuntimeException("Failed to close web3j service", e);
         }
+    }
+
+    @Override
+    public BatchRequest newBatch() {
+        return new BatchRequest(web3jService);
     }
 }
